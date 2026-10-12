@@ -21,11 +21,15 @@ def search_web(query):
     except Exception:
         return "Ошибка поиска."
 
-@app.route('/api', methods=['POST'])
-@app.route('/', methods=['POST'])
+@app.route('/api', methods=['POST', 'GET'])
+@app.route('/api/', methods=['POST', 'GET'])
+@app.route('/', methods=['POST', 'GET'])
 def webhook():
+    if request.method == 'GET':
+        return "Сервер Джарвиса успешно запущен и готов к работе!", 200
+
     data = request.json or {}
-    
+
     # Запрос от Алисы
     user_message = data.get('request', {}).get('original_utterance', '')
     

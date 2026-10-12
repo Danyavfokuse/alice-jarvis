@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: alice-jarvis
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn api.index:app
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
