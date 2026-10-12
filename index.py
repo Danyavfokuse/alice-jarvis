@@ -5,10 +5,10 @@ import os
 
 app = Flask(__name__)
 
-# Подключаем ключ Gemini из переменных окружения Vercel
+# Подключаем ключ Gemini из переменных окружения
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
-# Используем быструю модель (1.5-flash идеально подходит для голосовых ответов)
+# Используем быструю модель для голосовых ответов
 model = genai.GenerativeModel('gemini-1.5-flash')
 
 def search_web(query):
@@ -21,13 +21,13 @@ def search_web(query):
     except Exception:
         return "Ошибка поиска."
 
-@app.route('/api', methods=['POST', 'GET'])
-@app.route('/api/', methods=['POST', 'GET'])
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/api', methods=['POST', 'GET', 'HEAD'])
+@app.route('/api/', methods=['POST', 'GET', 'HEAD'])
+@app.route('/', methods=['POST', 'GET', 'HEAD'])
 def webhook():
-    if request.method == 'GET':
+    if request.method in ['GET', 'HEAD']:
         return "Сервер Джарвиса успешно запущен и готов к работе!", 200
-    Верно
+        
     data = request.json or {}
 
     # Запрос от Алисы
@@ -55,10 +55,10 @@ def webhook():
         
     # Формируем промпт для модели
     messages = [{"role": "user", "parts": ["Ты голосовой ассистент Джарвис. Отвечай кратко и естественно, так как тебя будут слушать, а не читать. "
-                                          "Если ниже есть результаты поиска, используй их для ответа.\n"
-                                          f"Результаты поиска: {search_results}"]}]
+                                         "Если ниже есть результаты поиска, используй их для ответа.\n"
+                                         f"Результаты поиска: {search_results}"]}]
     
-    # Добавляем контекст (последние 4 реплики для экономии памяти)
+    # Добавляем контекст (последние 4 реплики)
     for msg in history[-4:]:
         messages.append({"role": msg['role'], "parts": [msg['text']]})
         
